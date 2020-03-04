@@ -1,0 +1,70 @@
+<html>
+    <head>
+        <title>Dark Sky Intro</title>
+    </head>
+    
+<body>
+    <!-- all code would go here-->
+
+<script
+  src="https://code.jquery.com/jquery-3.4.1.min.js"
+  integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+  crossorigin="anonymous"></script>
+    
+    <script type="text/javascript">
+        
+        
+        $(document).ready(function(){
+            
+            
+            // my API key
+            var key = '3993c7f026ca3be6be9531eae0012693';
+            
+            // API call 
+            var url=  'https://api.darksky.net/forecast/'+key+'/-35.2809,149.1300?units=auto&callback=?';
+            
+            $.getJSON(url,function(data) {
+                //output request
+                console.log(data);
+                
+                //get current temperature
+                console.log(data.currently.temperature);
+                $('.current span').html(data.currently.temperature)
+                
+                
+                //New easy  way
+                //get summary
+                var summary = data.currently.summary;
+                $('.summary').html(summary);
+                
+                //get time
+                //get current time
+                console.log(data.currently.time);
+                var now= new Date(data.currently.time*1000);
+                console.log(now);
+                $('.time').html(now.toDateString()+','+ now.toTimeString())
+                
+            });
+
+        });
+        
+        </script>
+    
+        <div class="content">
+            
+     <!-- set the content of these tags in the jquery-->
+            
+            <h3>At: </h3>
+            <p class="time"></p>
+            
+            <h2 class="current">Current temp is: <span></span> &deg;C</h2>
+            
+            <h3 class="Summary"></h3>
+            
+            <p class="summary"></p>
+            
+    
+    
+    </body>
+    
+</html>
