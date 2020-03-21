@@ -43,14 +43,47 @@
                 var now= new Date(data.currently.time*1000);
                 console.log(now);
                 $('.time').html(now.toDateString()+','+ now.toTimeString())
+             
+                //loopthrough data and add to the table 
+                //new row for each new time
+                
+                for (var i = 0; i <data.daily.data.lenght; i ++){
+                    console.log(data.daily.data[i]);
+                    
+                    var f = data.daily.data[i]; //data for one day in the forecast
+                    
+                    var row = $("<tr>");
+                    var date = new Date (f.timex1000);
+                    
+                    row.append("<td>" + date.toDateString() + </td>);
+                    row.append("<td>" + f.summary + "</td>");
+                    row.append("<td>" + f.temperatureMin + "</td>");
+                    row.append("<td>" + f.temperatureMax + "</td>");
+                    
+                    
+                    
+                    //append the tr info in the table 
+                    
+                    $("#forecast").append(row);
+                }
+                
                 
             });
 
         });
         
-        </script>
+    </script>
     
         <div class="content">
+            
+        <div id ="forecast">
+            <table>
+                <tr><th>date</th><th>summary</th><th>min</th><th>max</th></tr>
+                
+            </table>
+            
+            
+            
             
      <!-- set the content of these tags in the jquery-->
             
