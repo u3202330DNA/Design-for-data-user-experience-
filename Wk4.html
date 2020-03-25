@@ -1,208 +1,236 @@
 <html>
-    <head>
-        <title>Dark Sky Intro</title>
-    </head>
-    
-    <body>
+
+<head>
+    <title>Dark Sky Intro</title>
+</head>
+
+<body>
     <!-- all code would go here-->
 
-        <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
-    
-        <script type="text/javascript">
-        $(document).ready(function(){
-            
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+
+    <!--        Load moment.js-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+
             var newlocation = '';
-            
+
             if (navigator.geolocation) {
-                
+
                 console.log(navigator.geolocation);
-                
+
                 function success(pos) {
-                    
+
                     console.log(pos);
-                    
+
                     var crds = pos.coords;
-                    
+
                     console.log('my current position is: ');
                     console.log('lat:' + crds.latitude);
                     console.log('long:' + crds.longitude);
                     console.log('more or less:' + crds.accuracy + 'm away.');
-                    
+
                     //string for api (darksky)
                     newLocation = crds.latitude + ',' + crds.longitude;
-                    
-                    
+
+
                     //string to acquire location (opencage)
                     var locationName = crds.latitude + '+' + crds.longitude;
-                    
-                    
+
+
                     //dara from darksky weather
                     getWeatherData(newLocation)
-                    
+
                     //location name
                     getLocationName(locationName);
-                    
-                    
-                    
-                
+
                 }
-                
+
                 function error(err) {
                     console.log(err);
-                    
-            
+
                     //ACT default location
                     var defaultLocation = '-35.4735, 149.0124';
-                    
+
                     getWeatherData(defaultLocation);
-                                        
+
                 }
-                
+
                 //line that triggers browser prompt
                 navigator.geolocation.getCurrentPosition(success, error);
-                
-                
-                
-                
+
             }
-            
-            
-        });// Close document ready
-            
-            //acquire location name
-            
-            function getLocationName (location){
-                
-                var apiKey = 'b26d33df0de0440cb6bc852e63c3a595 ';
-                
-                var geocodeUrl = 'https://api.opencagedata.com/geocode/v1/json?q=' + location + ' &key=' + apiKey;
-                
-                $.get(geocodeUrl, function(locationData){
-                    console.log(locationData.results [0]);
-                    
-                    var locationComponent = locationData.results [0].components;
-                    
-                    var locString = locationComponent.suburb + ', ' + locationComponent.state_code + ', ' + locationComponent.postcode;
-                    
-                    var location = $('<h1>').text("In: " + locString);
-                    
-                    $("#currently").append(location);
-                    
-                });
 
 
-                
-            };
-            
-            
-            
-            
-            //Function will load dark ski API
-            function getWeatherData(currentLocation){
-                            
-                    
-                // my API key
-                var key = '3993c7f026ca3be6be9531eae0012693';
-            
-                // API call 
-                var url=  'https://api.darksky.net/forecast/'+key+'/' + currentLocation + '?units=auto&callback=?';
-            
-                $.getJSON(url,function(data) {
+        }); // Close document ready
+
+        //acquire location name
+
+        function getLocationName(location) {
+
+            var apiKey = 'b26d33df0de0440cb6bc852e63c3a595 ';
+
+            var geocodeUrl = 'https://api.opencagedata.com/geocode/v1/json?q=' + location + ' &key=' + apiKey;
+
+            $.get(geocodeUrl, function(locationData) {
+                console.log(locationData.results[0]);
+
+                var locationComponent = locationData.results[0].components;
+
+                var locString = locationComponent.suburb + ', ' + locationComponent.state_code + ', ' + locationComponent.postcode;
+
+                //                var location = $('<h1>').text("In: " + locString);
+
+                //youare mixing two ways of adding content to the page whichis very confusing
+                // in class we looked at 2 techniques, you have both! Simplify to make it easier.
+                //                $("#currently").append(location);
+                $(".location").html(locString);
+
+            });
+
+
+
+        };
+
+
+
+
+        //Function will load dark ski API
+        function getWeatherData(currentLocation) {
+
+
+            // my API key
+            var key = '3993c7f026ca3be6be9531eae0012693';
+
+            // API call 
+            var url = 'https://api.darksky.net/forecast/' + key + '/' + currentLocation + '?units=auto&callback=?';
+
+            $.getJSON(url, function(data) {
                 //output request
-                console.log(data);
-                
+                //                console.log(data);
+
                 //get current temperature
                 console.log(data.currently.temperature);
-                $("#currently").html(data.currently.temperature)
-                
-                
+                //BEN: to include degree symbol, use html entity
+                // for degrees it is: &deg; 
+                $(".temp").html(data.currently.temperature + '&deg;Celsius')
+
+
                 //New easy  way
                 //get summary
                 var summary = data.currently.summary;
-                $("#currently").html(summary);
-                
+                $(".summary").html(summary);
+
                 //get time
                 //get current time
                 console.log(data.currently.time);
-                var now= new Date(data.currently.time*1000);
-                console.log(now);
-                $("#currently").html(now.toDateString()+','+ now.toTimeString())
-                
-                $("#currently").append(summary);
-                
+                //                var now = new Date(data.currently.time * 1000);
+
+                //BEN: lets use moment.js to display the date instead
+
+                //first create variable with current date, so we can reuse it if needed
+                var currentTimeString = moment(data.currently.time * 1000);
+
+                //then we canjust format this variable and display it
+                //check the format options here: https://momentjs.com/docs/#/displaying/
+
+                var prettyDate = currentTimeString.format("dddd, MMMM Do YYYY, h:mm:ss a");
+                console.log(prettyDate);
+
+                $(".time").html(prettyDate)
+
+                //                $("#currently").append(summary);
+
                 //loopthrough data and add to the table 
                 //new row for each new time
-                
-                for (var i = 0; i <data.daily.data.length; i ++){    
+
+                for (var i = 0; i < data.daily.data.length; i++) {
                     var f = data.daily.data[i]; //data for one day in the forecast
-                    
-                    console.log(f)
-                    
-                    
+
+                    //                    console.log(f)
+
+
                     var row = $("<tr>");
-                    var date = new Date (f.time*1000);
-                    
+                    //old date
+                    //                    var date = new Date(f.time * 1000);
+
+                    //new date with moment instead
+                    var date = moment(f.time * 1000);
 
                     //table contents
-                    row.append("<td>" + date.toDateString() + "</td>");
+                    //reformat date with moment
+                    //check the format options here: https://momentjs.com/docs/#/displaying/
+                    row.append("<td>" + date.format("dddd") + "</td>");
                     row.append("<td>" + f.summary + "</td>");
-                    
+
                     //temperature range
-                    row.append("<td>" + Math.round(f.temperatureMin) + "</td>");
-                    row.append("<td>" + Math.round(f.temperatureMax) + "</td>");
-                    
+                    row.append("<td>" + Math.round(f.temperatureMin) + "&deg;</td>");
+                    row.append("<td>" + Math.round(f.temperatureMax) + "&deg;</td>");
+
                     //humidity
                     row.append("<td>" + f.humidity + "</td>");
-                    
+
                     //uv index
                     row.append("<td>" + f.uvIndex + "</td>");
-                    
+
                     //wind speed
                     row.append("<td>" + f.windSpeed + "</td>");
-                    
+
                     //Precipitation
                     row.append("<td>" + f.precipType + "</td>");
-                    
-                    
-                    
-                    
-                    
+
                     //append the tr info in the table 
-                    
+
                     $("#forecast").append(row);
                 }
 
             });
-            }
-        
-        </script>
-        
-        <div id = "currently"> </div> 
-        <div>
-        
-            <table id = "forecast">
-            <tr><th>Date</th><th>Summary</th><th>Min</th><th>Max</th> <th>Humidity</th> <th>UV Index</th> <th>Wind Speed</th><th>Precipitation</th></tr>
-            
-            </table>
-        
-        </div>
-        
-        <div class="content">
-            
-     <!-- set the content of these tags in the jquery-->
-            
-            <h2>At: </h2>
-            <p class="time">Wed Mar 25 2020,14:33:20 GMT+1100 (AEDT)</p>
-            
-            <h2 class="current">Current temp is: <span>23.45</span> °C</h2>
-            
-            <h3 class="Summary">Partly Cloudy</h3>
-            
-           
-             
-    
-    
-    
-        </div>
+        }
+
+    </script>
+
+    <!--    <div id="currently"> </div>-->
+    <div>
+        <h1>Current Forecast</h1>
+        <h3>For:</h3>
+        <!-- set the content of the paragraph tags in the jquery-->
+
+        <p class="location"></p>
+
+        <h3>At:</h3>
+        <p class="time">
+            <!--        no need to put anything here-->
+        </p>
+
+        <h3>The current temperature is:</h3>
+        <p class="temp"></p>
+
+        <h3>Summary</h3>
+        <p class="Summary">
+            <!-- Partly Cloudy-->
+        </p>
+
+        <hr>
+
+        <h2>Weekly forecast</h2>
+        <table id="forecast">
+            <tr>
+                <th>Date</th>
+                <th>Summary</th>
+                <th>Min</th>
+                <th>Max</th>
+                <th>Humidity</th>
+                <th>UV Index</th>
+                <th>Wind Speed</th>
+                <th>Precipitation</th>
+            </tr>
+
+        </table>
+
+    </div>
+
 </body>
+
 </html>
