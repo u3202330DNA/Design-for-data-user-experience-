@@ -59,5 +59,44 @@ td.temp {
 }
 
 
+
+//display icon images in HTML accordingly with temperature, the link did not work to loop through the icons
+ row.append
+                    
+                    //set empty image string   
+                var iconImage = ''; 
+                   
+                    //shortcut for data
+                var cIcon = data.currently.icon; 
+                    
+                    //icon images
+                    
+                var sunIcon = 'C:\Users\David\AppData\Local\Temp\Temp1_climacons.zip\clear-day.svg';
+                var moonIcon = 'C:\Users\David\AppData\Local\Temp\Temp1_climacons.zip\clear-night.svg';
+                var rainIcon = 'C:\Users\David\AppData\Local\Temp\Temp1_climacons.zip\rain.svg';
+                var windyIcon = 'C:\Users\David\AppData\Local\Temp\Temp1_climacons.zip\wind.svg';
+                var cloudyIcon = 'C:\Users\David\AppData\Local\Temp\Temp1_climacons.zip\cloudy.svg';
+                var coldIcon = 'C:\Users\David\AppData\Local\Temp\Temp1_climacons.zip\snow.svg';
+                    
+                    
+                    //mega if statement 
+                   
+                    if (cIcon === 'clear-day') {
+                        
+	               			
+                    } else if (cIcon === 'cloudy') {
+	               iconImage = cloudyIcon;		
+                    } else if (cIcon === 'rain') {
+                    iconImage = rainIcon;
+                    } else if (cIcon === 'clear-night') {
+	               iconImage = moonIcon;
+                    } else if (cIcon === 'snow') {
+	               iconImage = coldIcon;
+                    } else if (cIcon === 'wind') {
+                	iconImage = windyIcon;
+                    }
+
+//add icon image to HTML
+$('.icons').html('<img src="' + iconImage + '">');
+
    
-}
